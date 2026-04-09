@@ -9,7 +9,7 @@
 
 ## Запуск
 
-Билдим и запускаем docker compose апи станет доступно по **http//127.0.0.1:8000/api/v1/docs**
+Билдим и запускаем docker compose; апи станет доступно по **http//127.0.0.1:8000/api/v1/**
 Swagger -> **http://127.0.0.1:8000/docs#/payments/create_api_v1_payments__post**
 
 ```
