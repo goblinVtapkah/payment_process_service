@@ -1,0 +1,10 @@
+sqlalchemy==2.0.20
+pydantic==2.5.0
+pydantic_settings
+alembic==1.12.0
+aio-pika==9.6.2
+faststream==0.5.0
+asyncpg==0.29.0
+psycopg2
+fast-depends==2.*
+requests
