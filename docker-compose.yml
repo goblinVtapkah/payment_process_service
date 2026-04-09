@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./backend
+    container_name: api
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/payment_service_db
+      RABBITMQ_URL: amqp://rabbit:rabbitPassword@rabbitmq/
+      FASTAPI_PORT: 8000
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+  
+  consumer:
+    build: ./consumer
+    container_name: consumer
+    restart: always
+    depends_on:
+      - api
+      - postgres
+      - rabbitmq
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/payment_service_db
+      ASYNC_DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/payment_service_db
+      RABBITMQ_URL: amqp://rabbit:rabbitPassword@rabbitmq/
+    volumes:
+      - ./consumer/app:/app/app
+      - ./consumer/alembic:/app/alembic
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payment_service_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: rabbitPassword
+
+volumes:
+  postgres_data:
